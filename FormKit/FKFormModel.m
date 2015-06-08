@@ -554,26 +554,6 @@
             }];
             
             [weakRef.formMapper setValue: value forAttributeMapping:formAttributeMapping];
-
-
-
-/*            id currentValue = [self.object valueForKeyPath: attributeMapping.attribute];
-            
-            id value =
-            id newValue;
-            if([currentValue containsObject: value]){
-                newValue = [currentValue filteredArrayUsingPredicate: [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-                    return ![evaluatedObject isEqual: value];
-                }]];
-            }else{
-                if(currentValue == nil){
-                    newValue = [NSArray arrayWithObject: value];
-                }else{
-                    newValue = [currentValue arrayByAddingObject: value];
-                }
-            }
-  */
-            
             [weakRef reloadRowWithAttributeMapping:formAttributeMapping];
         }];
         vc.allowEmpty = YES;
