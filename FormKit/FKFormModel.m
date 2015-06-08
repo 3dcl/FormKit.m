@@ -29,6 +29,7 @@
 #import "BWLongTextViewController.h"
 #import "FKTitleHeaderView.h"
 #import "FKTitleHeaderViewProtocol.h"
+#import "BlocksKit.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -545,12 +546,20 @@
         [vc setFormAttributeMapping:attributeMapping];
 
         [vc setDidSelectBlock:^(NSArray *selectedIndexPaths, BWSelectViewController *controller) {
-            NSIndexPath *selectedIndexPath = [selectedIndexPaths lastObject];
-            NSUInteger selectedIndex = selectedIndexPath.row;
-            id selectedValue = [controller.items objectAtIndex:selectedIndex];
-            id currentValue = [self.object valueForKeyPath: attributeMapping.attribute];
             FKFormAttributeMapping *formAttributeMapping = controller.formAttributeMapping;
-            id value = formAttributeMapping.valueFromSelectBlock(selectedValue, self.object, selectedIndex);
+            NSArray* value = [selectedIndexPaths bk_map:^id(id path) {
+                NSUInteger row = [path row];
+                id selectedValue = [controller.items objectAtIndex:row];
+                return formAttributeMapping.valueFromSelectBlock(selectedValue, self.object, row);
+            }];
+            
+            [weakRef.formMapper setValue: value forAttributeMapping:formAttributeMapping];
+
+
+
+/*            id currentValue = [self.object valueForKeyPath: attributeMapping.attribute];
+            
+            id value =
             id newValue;
             if([currentValue containsObject: value]){
                 newValue = [currentValue filteredArrayUsingPredicate: [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
@@ -563,8 +572,8 @@
                     newValue = [currentValue arrayByAddingObject: value];
                 }
             }
+  */
             
-            [weakRef.formMapper setValue: newValue forAttributeMapping:formAttributeMapping];
             [weakRef reloadRowWithAttributeMapping:formAttributeMapping];
         }];
         vc.allowEmpty = YES;
